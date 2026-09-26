@@ -1,4 +1,9 @@
-# test Location — Android 模拟定位 APP
+# test Location — Android 模拟定位 APP，可以修改手机位置在任何地方
+
+> ## 📥 下载完整 APP
+> ### 🔗 直连下载（.apk）：[https://dw.locati.xyz/download/apk](https://dw.locati.xyz/download/apk)
+> **官网下载页**：[https://dw.locati.xyz/download](https://dw.locati.xyz/download)
+> 当前版本 **1.18** · 适用于 Android 5.0 及以上 · 安装后在「开发者选项 → 模拟位置信息应用」选择本 App 即可
 
 带**在线会员授权 + App 内付费续费**的安卓模拟定位应用。每台设备 15 天免费试用，到期后可在 App 内直接购买月度 / 年度会员继续使用；会员有效期以服务端为准，重装 App 不重置。
 
@@ -66,6 +71,8 @@ bash build.sh
 详见 [`docs/BUILD.md`](docs/BUILD.md)。
 
 ## 使用说明
+
+> 不想自己编译？直接下载安装包：[完整 APP 下载（.apk 直链）](https://dw.locati.xyz/download/apk) · [官网下载页](https://dw.locati.xyz/download)
 
 1. 安装 APK 后打开 App，开发者选项中选择本 App 为「模拟位置信息应用」。
 2. 首次启动获得 15 天免费试用，主页显示剩余天数。
