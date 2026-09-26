@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="leaflet.css"/>
+<script src="leaflet.js"></script>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}
+#map{width:100%;height:100%;position:absolute;top:0;left:0}
+.sb{position:absolute;top:0;left:0;right:0;z-index:1000;background:#fff;padding:6px;display:flex;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.sb input{flex:1;padding:8px;border:1px solid #ccc;border-radius:4px 0 0 4px;font-size:14px;outline:none}
+.sb button{padding:8px 16px;background:#1976D2;color:#fff;border:none;border-radius:0 4px 4px 0;font-size:14px}
+.ib{position:absolute;bottom:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.95);padding:6px 10px;font-size:12px;color:#333;text-align:center}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="sb">
+<input type="text" id="si" placeholder="搜索地点...">
+<button onclick="doS()">搜索</button>
+</div>
+<div class="ib" id="ib">点击地图选择位置</div>
+<script>
+// GCJ-02 to WGS-84 coordinate conversion
+var PI = 3.14159265358979324;
+var a = 6378245.0;
+var ee = 0.00669342162296594323;
+
+function outOfChina(lat, lng) {
+    return (lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271);
+}
+
+function transformLat(x, y) {
+    var ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+    ret += (20.0 * Math.sin(6.0 * x * PI) + 20.0 * Math.sin(2.0 * x * PI)) * 2.0 / 3.0;
+    ret += (20.0 * Math.sin(y * PI) + 40.0 * Math.sin(y / 3.0 * PI)) * 2.0 / 3.0;
+    ret += (160.0 * Math.sin(y / 12.0 * PI) + 320.0 * Math.sin(y * PI / 30.0)) * 2.0 / 3.0;
+    return ret;
+}
+
+function transformLng(x, y) {
+    var ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+    ret += (20.0 * Math.sin(6.0 * x * PI) + 20.0 * Math.sin(2.0 * x * PI)) * 2.0 / 3.0;
+    ret += (20.0 * Math.sin(x * PI) + 40.0 * Math.sin(x / 3.0 * PI)) * 2.0 / 3.0;
+    ret += (150.0 * Math.sin(x / 12.0 * PI) + 300.0 * Math.sin(x / 30.0 * PI)) * 2.0 / 3.0;
+    return ret;
+}
+
+// Convert GCJ-02 to WGS-84
+function gcj02ToWgs84(lat, lng) {
+    if (outOfChina(lat, lng)) return { lat: lat, lng: lng };
+    var dLat = transformLat(lng - 105.0, lat - 35.0);
+    var dLng = transformLng(lng - 105.0, lat - 35.0);
+    var radLat = lat / 180.0 * PI;
+    var magic = Math.sin(radLat);
+    magic = 1 - ee * magic * magic;
+    var sqrtMagic = Math.sqrt(magic);
+    dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * PI);
+    dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * PI);
+    return { lat: lat - dLat, lng: lng - dLng };
+}
+
+var map = L.map('map').setView([39.9042, 116.4074], 13);
+L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+    subdomains: ['1','2','3','4'],
+    attribution: '&copy; AutoNavi',
+    maxZoom: 18
+}).addTo(map);
+
+var mm = null, pm = null, rl = null, rm = false, rs = null;
+
+function si(t) { var e = document.getElementById('ib'); if (e) e.innerHTML = t; }
+
+map.on('click', function(ev) {
+    // AMap tiles return GCJ-02 coordinates, convert to WGS-84 for GPS
+    var gcjLat = ev.latlng.lat, gcjLng = ev.latlng.lng;
+    var wgs = gcj02ToWgs84(gcjLat, gcjLng);
+    var lat = wgs.lat, lng = wgs.lng;
+
+    if (rm) {
+        if (!rs) {
+            rs = { lat: lat, lng: lng };
+            if (pm) map.removeLayer(pm);
+            pm = L.marker([gcjLat, gcjLng]).addTo(map).bindPopup('起点').openPopup();
+            si('起点: ' + lat.toFixed(6) + ',' + lng.toFixed(6) + ' 请点击终点');
+            if (window.Android) window.Android.onLoc(lat, lng);
+        } else {
+            if (rl) map.removeLayer(rl);
+            rl = L.polyline([[rs.lat, rs.lng], [lat, lng]], { color: 'blue', weight: 3 }).addTo(map);
+            L.marker([gcjLat, gcjLng]).addTo(map).bindPopup('终点').openPopup();
+            si('路线已设');
+            if (window.Android) window.Android.onRoute(rs.lat, rs.lng, lat, lng);
+            rm = false; rs = null;
+        }
+    } else {
+        if (pm) map.removeLayer(pm);
+        pm = L.marker([gcjLat, gcjLng]).addTo(map).bindPopup(lat.toFixed(6) + ',' + lng.toFixed(6)).openPopup();
+        si('已选: ' + lat.toFixed(6) + ',' + lng.toFixed(6));
+        if (window.Android) window.Android.onLoc(lat, lng);
+    }
+});
+
+function setRM(en) {
+    rm = en; rs = null;
+    if (rl) { map.removeLayer(rl); rl = null; }
+    if (pm) { map.removeLayer(pm); pm = null; }
+    if (en) si('路线模式-请点击起点');
+}
+
+function setMM(a, g) {
+    if (mm) map.removeLayer(mm);
+    var ic = L.divIcon({
+        className: '',
+        html: '<div style="background:#F44336;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px rgba(0,0,0,.4)"></div>',
+        iconSize: [18, 18], iconAnchor: [9, 9]
+    });
+    // WGS-84 coordinates back to GCJ-02 for display on AMap tiles
+    var gcj = wgs84ToGcj02(a, g);
+    mm = L.marker([gcj.lat, gcj.lng], { icon: ic }).addTo(map);
+    map.setView([gcj.lat, gcj.lng]);
+    si('模拟: ' + a.toFixed(6) + ',' + g.toFixed(6));
+}
+
+// Convert WGS-84 to GCJ-02 (for displaying mock location on map)
+function wgs84ToGcj02(lat, lng) {
+    if (outOfChina(lat, lng)) return { lat: lat, lng: lng };
+    var dLat = transformLat(lng - 105.0, lat - 35.0);
+    var dLng = transformLng(lng - 105.0, lat - 35.0);
+    var radLat = lat / 180.0 * PI;
+    var magic = Math.sin(radLat);
+    magic = 1 - ee * magic * magic;
+    var sqrtMagic = Math.sqrt(magic);
+    dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * PI);
+    dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * PI);
+    return { lat: lat + dLat, lng: lng + dLng };
+}
+
+function clrMM() { if (mm) { map.removeLayer(mm); mm = null; } si('已停止'); }
+
+function doS() {
+    var q = document.getElementById('si').value;
+    if (!q) return;
+    si('搜索中...');
+    fetch('https://restapi.amap.com/v3/place/text?key=your_key&keywords=' + encodeURIComponent(q))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+        if (d && d.pois && d.pois.length > 0) {
+            var loc = d.pois[0].location.split(',');
+            var gcjLng = parseFloat(loc[0]), gcjLat = parseFloat(loc[1]);
+            var wgs = gcj02ToWgs84(gcjLat, gcjLng);
+            map.setView([gcjLat, gcjLng], 15);
+            if (pm) map.removeLayer(pm);
+            pm = L.marker([gcjLat, gcjLng]).addTo(map).bindPopup(d.pois[0].name).openPopup();
+            si('找到: ' + wgs.lat.toFixed(6) + ',' + wgs.lng.toFixed(6));
+            if (window.Android) window.Android.onLoc(wgs.lat, wgs.lng);
+        } else {
+            // Fallback to Nominatim
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&accept-language=zh-CN')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d && d.length > 0) {
+                    var gcjLat2 = parseFloat(d[0].lat), gcjLng2 = parseFloat(d[0].lon);
+                    var wgs2 = gcj02ToWgs84(gcjLat2, gcjLng2);
+                    map.setView([gcjLat2, gcjLng2], 15);
+                    if (pm) map.removeLayer(pm);
+                    pm = L.marker([gcjLat2, gcjLng2]).addTo(map).bindPopup(d[0].display_name).openPopup();
+                    si('找到: ' + wgs2.lat.toFixed(6) + ',' + wgs2.lng.toFixed(6));
+                    if (window.Android) window.Android.onLoc(wgs2.lat, wgs2.lng);
+                } else {
+                    si('未找到');
+                }
+            }).catch(function() { si('搜索失败'); });
+        }
+    }).catch(function() {
+        // Fallback to Nominatim
+        fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&accept-language=zh-CN')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d && d.length > 0) {
+                var gcjLat3 = parseFloat(d[0].lat), gcjLng3 = parseFloat(d[0].lon);
+                var wgs3 = gcj02ToWgs84(gcjLat3, gcjLng3);
+                map.setView([gcjLat3, gcjLng3], 15);
+                if (pm) map.removeLayer(pm);
+                pm = L.marker([gcjLat3, gcjLng3]).addTo(map).bindPopup(d[0].display_name).openPopup();
+                si('找到: ' + wgs3.lat.toFixed(6) + ',' + wgs3.lng.toFixed(6));
+                if (window.Android) window.Android.onLoc(wgs3.lat, wgs3.lng);
+            } else {
+                si('未找到');
+            }
+        }).catch(function() { si('搜索失败'); });
+    });
+}
+
+document.getElementById('si').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') doS();
+});
+</script>
+</body>
+</html>

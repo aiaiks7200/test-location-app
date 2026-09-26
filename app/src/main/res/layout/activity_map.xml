@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <WebView
+        android:id="@+id/webview_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Top controls overlay -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top"
+        android:padding="8dp">
+
+        <!-- Settings button in top-right -->
+        <Button
+            android:id="@+id/btn_settings"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:text="@string/settings_icon"
+            android:textSize="18sp"
+            android:textColor="#FF2196F3"
+            android:background="#CCFFFFFF"
+            android:elevation="4dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Search bar -->
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:hint="@string/search_hint"
+            android:background="@color/white"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:elevation="4dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Lat/Lng input -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:padding="8dp"
+            android:elevation="4dp"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/et_latitude"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:hint="@string/latitude"
+                android:inputType="numberDecimal|numberSigned"
+                android:textSize="14sp"
+                android:padding="4dp"
+                android:layout_marginEnd="4dp" />
+
+            <EditText
+                android:id="@+id/et_longitude"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:hint="@string/longitude"
+                android:inputType="numberDecimal|numberSigned"
+                android:textSize="14sp"
+                android:padding="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom controls overlay -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:padding="8dp"
+        android:background="#CCFFFFFF">
+
+        <!-- Status -->
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mock_stopped"
+            android:textSize="14sp"
+            android:textColor="@color/red"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Speed slider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/speed"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp" />
+
+            <SeekBar
+                android:id="@+id/seekbar_speed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="49"
+                android:progress="4" />
+
+            <TextView
+                android:id="@+id/tv_speed_value"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="5 m/s"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Action buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_start_mock"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/start_mock"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:background="@color/green"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/btn_stop_mock"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/stop_mock"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:background="@color/red" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

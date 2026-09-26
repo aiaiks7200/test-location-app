@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            android:textSize="24sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/tv_membership_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="会员有效期：加载中"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/card_background"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btn_subscribe"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="增加使用时间"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@color/green"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="2dp" />
+
+        <Button
+            android:id="@+id/btn_privacy"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/privacy_policy"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:background="@color/card_bg"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="2dp" />
+
+        <Button
+            android:id="@+id/btn_agreement"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/user_agreement"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:background="@color/card_bg"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="2dp" />
+
+        <Button
+            android:id="@+id/btn_language"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/language_settings"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:background="@color/card_bg"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="2dp" />
+
+        <Button
+            android:id="@+id/btn_about"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/about"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:background="@color/card_bg"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="2dp" />
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/back"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="24dp" />
+
+    </LinearLayout>
+</ScrollView>

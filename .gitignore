@@ -1,0 +1,25 @@
+# Gradle / build outputs
+build/
+.gradle/
+local.properties
+*.apk
+*.aab
+
+# IDE
+.idea/
+*.iml
+captures/
+.cxx/
+
+# Signing — 生产 keystore 不要提交
+*.keystore
+*.jks
+*.p12
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local env
+.env
